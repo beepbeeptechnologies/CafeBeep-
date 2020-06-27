@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
 __author__  = "Blaze Sanders"
-__email__   = "blaze.d.a.sanders@gmail.mvp"
-__company__ = "Robotic Beverage Technologies, Inc"
+__email__   = "b@beepbeeptechinc.com"
+__company__ = "BEEP BEEP Technologies, Inc"
 __status__  = "Development"
-__date__    = "Late Updated: 2020-06-22"
-__doc__     = "Logic to run Flask based GUI front-end for CoCoTaps"
+__date__    = "Late Updated: 2020-06-26"
+__doc__     = "Logic to run Flask based GUI front-end for Cafe BEEP kiosk"
 
 # If you get "OSError: [Errno 98] Address already in use" run the next two commands
 # sudo lsof -t -i tcp:5000
-# sudo kill -9 7076
+# sudo kill -9 ID
 
 # Useful system jazz
 import sys, traceback, argparse, string
@@ -37,26 +37,37 @@ app = Flask(__name__)
 app.secret_key = 'FreshCoConuts@42'			# TODO Select STRONG key for production code
 app.config['SESSION_TYPE'] = 'filesystem'	# TODO Fix Image URL filepath code in welcome.html
 
+#Standard Flow, Returning Custom Flow, No Cell Phone Flow
+
+
+
 @app.route('/')
+def MainScreen():
+	HTMLtoDisplay = "main.html"
+	return render_template(HTMLtoDisplay)
+
+
+@app.route('/welcome')
 def WelcomeScreen():
 	HTMLtoDisplay = "welcome.html"
 	return render_template(HTMLtoDisplay)
 
-@app.route('/TapOrCut', methods=['GET'])
-def TapOrCutScreen():
+@app.route('/phoneDialer', methods=['GET'])
+def PhoneDialerScreen():
 	"""
-	GUI for displaying options to the user Cancel order or  1. Tap 2. Cutoff.
+	GUI to enter a cell phone number to find a user account
+	
 	HTTP GET Method
-	:return: HTML template to display TaporCut
+	:return: HTML template to display phoneDialer.html
 	"""
 	# userSelection = request.args.get('userselection')
 	# print('userSelection:: ' + str(userSelection))
-	HTMLtoDisplay = "tapOrCut.html"
+	HTMLtoDisplay = "phoneDialer.html"
 	return render_template(HTMLtoDisplay)
 
 
-@app.route('/Branding', methods=['GET'])
-def Branding():
+@app.route('/customizeDrink', methods=['GET'])
+def CustomizeDrinkScreen():
 	"""
 	GUI for displaying options to the user for selecting a brand to get printed on the coconut.
 	HTTP GET Method
@@ -65,39 +76,12 @@ def Branding():
 	"""
 	userSelection = request.args.get('userselection')
 	print('userSelection:: ' + str(userSelection))
-	HTMLtoDisplay = "branding.html"
-	return render_template(HTMLtoDisplay)
-
-@app.route('/Health', methods=['GET'])
-def Health():
-	"""
-	GUI for displaying options to the user for selecting Health Supplements
-	 HTTP GET Method
-	 @userselection from the branding.html , Depending on userselection, will print the brand on the coconut.
-	:return: HTML template to display health.html
-	"""
-	userSelection = request.args.get('userselection')
-	print('userSelection:: ' + str(userSelection))
-	HTMLtoDisplay = "health.html"
+	HTMLtoDisplay = "customizeDrink.html"
 	return render_template(HTMLtoDisplay)
 
 
-@app.route('/Flavor', methods=['GET'])
-def Flavor():
-	"""
-	GUI for displaying options to the user for selecting different flavors.
-	HTTP GET Method
-	@userselection from the health.html , Depending on userselection, will mix the selected healthy supplement to the order.
-	:return: HTML template to display flavor.html
-	"""
-	userSelection = request.args.get('userselection')
-	print('userSelection:: ' + str(userSelection))
-	HTMLtoDisplay = "flavor.html"
-	return render_template(HTMLtoDisplay)
-
-
-@app.route('/Waiting', methods=['GET'])
-def Waiting():
+@app.route('/waiting', methods=['GET'])
+def WaitingSreen():
 	"""
 	TODO This function will get a signal from the SYSTEM???? to move on to the next screen.
 	GUI to display WAITING.
@@ -110,7 +94,7 @@ def Waiting():
 	HTMLtoDisplay = "waiting.html"
 	return render_template(HTMLtoDisplay)
 
-@app.route('/Complete')
+@app.route('/complete')
 def CompleteScreen():
 	"""
 	GUI to display COMPLETE.
@@ -121,9 +105,9 @@ def CompleteScreen():
 	return render_template(HTMLtoDisplay)
 
 if __name__ == '__main__':
-    DebugOject = Debug(True, "GUI.py")
+    GuiDebugOject = Debug(True, "GUI.py")
     app.run(debug=True)
-    if(DebugOject.GetMode == True):
+    if(GuiDebugOject.GetMode == True):
 	    # Allow URLs to be refreshed (F5) without restarting web server after code changes
 	    app.run(debug=True)
 	    check_call("export FLASK_DEBUG=1", shell=True)
