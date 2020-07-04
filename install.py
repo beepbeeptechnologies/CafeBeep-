@@ -4,7 +4,7 @@ ___author__ = "Blaze Sanders"
 __email__   = "blaze.d.a.sanders@gmail.mvp"
 __company__ = "Robotic Beverage Technologies Inc"
 __status__  = "Development"
-__date__    = "Late Updated: 2020-06-22"
+__date__    = "Late Updated: 2020-07-01"
 __doc__     = "Install script to setup development enviroment for CoCoTaps Tapomatic v2020.0"
 """
 
@@ -36,7 +36,7 @@ args = parser.parse_args()
 if __name__ == "__main__":
 
 	# When using Windows 10 code flows here
-	if(args.Computer_Type == "PC" or args.Computer_Type == "pc"):
+	if(args.Computer_Type.lower() == "pc"):
 		# Tapomatic v2020.0: error: the following arguments are required: PC_username
 		# PS C:\Users\Owner\OneDrive\Documents\GitHub\Tapomatic> python .\install.py Owner
 		# 'clear' is not recognized as an internal or external command, operable program or batch file. Traceback (most recent call last):
@@ -55,17 +55,35 @@ if __name__ == "__main__":
 		check_call("set PATH=%PATH%;set PATH=%PATH%;'" + filepath +"'", shell=True) #TODO Does this work with PowerShell?
 
 	# When using Linux / Rapsberry Pi code flows here
-	if(args.Computer_Type == "Pi" or args.Computer_Type == "pi"):
+	if(args.Computer_Type.lower() == "pi" or args.Computer_Type.lower() = "linux"):
 		check_call("clear",shell=True)              # Clear terminal
 		check_call("sudo apt update", shell=True) 	# Check and update your system
 		check_call("sudo apt upgrade", shell=True)
 		sleep(5) 			                        # Pause program to allow user to read upgrade output
-		check_call("clear",shell=True)
+		check_call("clear", shell=True)
+		check_call("sudo apt install python3-gpiozero", shelll=True)
 		check_call("sudo apt install python3-pip", shell=True) 	# Flask requires Python 3 to work
+
+		# Uninstall LibreOffice and Wolfram Alpha Engine to free up 1 GB for openCV code
+		# https://www.pyimagesearch.com/2019/09/16/install-opencv-4-on-raspberry-pi-4-and-raspbian-buster/
+		check_call("sudo apt-get purge libreoffice", shell=True)
+		check_call("sudo apt-get purge wolfram-engine", shell=True)
+
+		#Install computer vision library to wrap images around coconuts and load photos
+		check_call("pip3 install opencv-python", shell=True)
+
+		# Install Docker for enviroment configuration
+		# https://phoenixnap.com/kb/docker-on-raspberry-pi
+		check_call("curl -fsSL https://get.docker.com -o get-docker.sh", shell=True)
+		check_call("sudo sh get-docker.sh", shell=True)
+		check_call("sudo sh get-docker.sh", shell=True)
 		#check_call("pip install pipenv", shell=True)
 
+		# Setup Device on UpSwift OTA platform
+		check_call("su -c 'wget -O - "https://dashboard.upswift.io/install_upswift" | bash -s vWeq2haFPePhBjK2Gip3nKuvdM9MYYqtcw Tapomatic0'", shell=True)
+
 	# When using Mac code flows here
-	if(args.Computer_Type == "Mac" or args.Computer_Type == "mac" or args.Computer_Type == "MAC"):
+	if(args.Computer_Type.lower() == "mac"):
 		# Install a real package manager (Homebrew) on the Mac :) https://brew.sh
 		#check_call("/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)", shell=True)
 		#check_call("git clone https://github.com/Homebrew/brew ~/.linuxbrew/Homebrew", shell=True)
@@ -76,10 +94,13 @@ if __name__ == "__main__":
 		check_call("brew install python3", shell=True)
 		check_call("brew install pipenv", shell=True)
 		check_call("brew install docutils", shell=True)
-		check_call("brew install numpy", shell=True) 
-		check_call("brew install opencv-python", shell=True) 
+		check_call("brew install numpy", shell=True)
+		check_call("brew install opencv-python", shell=True)
+		# Install CV libs
+		check_call("pip3 install cv2", shell=True)
+		check_call("pip3 install scikit-image", shell=True)
 
-	# Start PIPENV Python Virtual Environment packaging tool installs 
+	# Start PIPENV Python Virtual Environment packaging tool installs
 	# @link https://pipenv.readthedocs.io/en/latest/basics/
 	# Communicate with sensors
 	# TODO DO WE NEEDED THIS? check_call("pipenv install pyserial", shell=True)
@@ -91,18 +112,17 @@ if __name__ == "__main__":
 	check_call("export FLASK_APP=GUI.py", shell=True)   # Set enviroment variable to select GUI.py file as the Flask application
 
 	# Install a documentation library
-	check_call("pip install docutils", shell=True) 	
+	check_call("pip install docutils", shell=True)
 
-	# Install a numby library for array creation
-	#check_call("pipenv install numpy", shell=True)		
 
-	# Install computer vision library to wrap images around coconuts and load photos
-	check_call("pip3 install opencv-python", shell=True)
-	
+
+# Install a numby library for array creation
+	#check_call("pipenv install numpy", shell=True)
+
 	# Activate PIPENV
-	#check_call("pipenv shell", shell=True) 				
-	
+	#check_call("pipenv shell", shell=True)
+
 	# Start GUI
-	#check_call("pipenv run python GUI.py", shell=True)	
-	
+	#check_call("pipenv run python GUI.py", shell=True)
+
 	# exit # deactivate and quit
